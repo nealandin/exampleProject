@@ -16,7 +16,7 @@ body {
 .title-text{
     font-family: 'Roboto Mono', monospace;
     font-weight: bold;
-    font-size: 15vw;
+    font-size: 5vw;
     color: rgb(61, 61, 152);
     margin: 0;
     margin-top: 4%;
@@ -25,7 +25,7 @@ body {
 
 .body-text{
     font-family: 'Roboto Mono', monospace;
-    font-size: 4.5vw;
+    font-size: 10vw;
     color: rgb(62, 80, 160);
     margin: 0;
     margin-top: 4%;
@@ -35,7 +35,7 @@ body {
 
 button {
     font-family: 'Roboto Mono', monospace;
-    font-size: 5vw;
+    font-size: 15vw;
     font-weight: bold;
     color: rgb(61, 61, 152);
     background-color: aliceblue;
