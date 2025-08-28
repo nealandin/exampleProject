@@ -78,6 +78,7 @@ const io = new Server(server, {
       talking: false,
       role: "",
       roleActions: [],
+      hasRole: false,
       currentInstruction: "",
     }
 
@@ -88,12 +89,15 @@ const io = new Server(server, {
     if (role === "role1") {
       users[socketId].role = role;
       users[socketId].roleActions = role1;
+      users[socketId].hasRole = true;
     } else if (role === "role2") {
       users[socketId].role = role;
       users[socketId].roleActions = role2;
+      users[socketId].hasRole = true;
     } else if (role === "role3") {
       users[socketId].role = role;
       users[socketId].roleActions = role3;
+      users[socketId].hasRole = true;
     }
     console.log("user role assigned: " + users[socketId].role);
   }
@@ -191,7 +195,12 @@ const io = new Server(server, {
       });
 
       socket.on("getInstruction", () => {
-
+        if(!users[socket.id]){
+          return;
+        }
+        if(!users[socket.id].hasRole){
+          return;
+        }
         let roleActions = users[socket.id].roleActions; // get the roleActions array from the user object
         let instruction = getRandomFromArray(roleActions); // get a random instruction from the roleActions array
         
@@ -200,7 +209,7 @@ const io = new Server(server, {
           instruction = getRandomFromArray(roleActions); // get a new random instruction
         } 
  
-        io.emit("next-instruction", instruction);
+        socket.emit("next-instruction", instruction);
         users[socket.id].currentInstruction = instruction; // set instruction to currentInstruction in user object
         
       });

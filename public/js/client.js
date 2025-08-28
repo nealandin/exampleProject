@@ -6,6 +6,7 @@ const instructionText = document.querySelector('#instruction-text');
 const joinRoomButton = document.getElementById('join-room');
 const roleButtons = document.getElementsByClassName("role-button");
 
+
 // socket events sent from server
 socket.on('next-instruction', (data) => { // Listens for the 'next-instruction' event from the server
     titleText.style.display = "none";
