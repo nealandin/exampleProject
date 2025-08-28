@@ -6,14 +6,17 @@ const instructionText = document.querySelector('#instruction-text');
 const joinRoomButton = document.getElementById('join-room');
 const roleButtons = document.getElementsByClassName("role-button");
 
+socket.on('disconnecting', function() {
+    location.reload();
+});
 
 // socket events sent from server
-socket.on('next-instruction', (data) => { // Listens for the 'next-instruction' event from the server
+socket.on('next-instruction', function(data) { // Listens for the 'next-instruction' event from the server
     titleText.style.display = "none";
     instructionText.innerHTML = data; // Updates the text content of the testText element
 });
 
-socket.on('time-for-next-instruction', () => {
+socket.on('time-for-next-instruction', function() {
     socket.emit("getInstruction");
 });
 

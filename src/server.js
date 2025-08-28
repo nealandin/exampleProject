@@ -51,17 +51,10 @@ const io = new Server(server, {
     }
   ];
 
-  const instructions = [
-    "Stand up",
-    "Sit down",
-    "Jump up and down",
-    "Spin around",
-    "Wave your hands",
-  ]
 
-  const role1 = ["role1-walk", "role1-talk"];
-  const role2 = ["role2-walk", "role2-talk"];
-  const role3 = ["role3-walk", "role3-talk"];
+  const role1Actions = ["role1-walk", "role1-talk"];
+  const role2Actions = ["role2-walk", "role2-talk"];
+  const role3Actions = ["role3-walk", "role3-talk"];
 
 
 
@@ -70,7 +63,7 @@ const io = new Server(server, {
 
   // creating and adding user object to users array
   function createUser(socketId) {
-    
+    //console.log("user array before user added: " , users);
     users[socketId] = {
       id: socketId,
       name: "",
@@ -81,22 +74,21 @@ const io = new Server(server, {
       hasRole: false,
       currentInstruction: "",
     }
-
-    console.log("user array with user added: " , users);
+    //console.log("user array with user added: " , users);
   }
 
   function assignRole(socketId, role) {
     if (role === "role1") {
       users[socketId].role = role;
-      users[socketId].roleActions = role1;
+      users[socketId].roleActions = role1Actions;
       users[socketId].hasRole = true;
     } else if (role === "role2") {
       users[socketId].role = role;
-      users[socketId].roleActions = role2;
+      users[socketId].roleActions = role2Actions;
       users[socketId].hasRole = true;
     } else if (role === "role3") {
       users[socketId].role = role;
-      users[socketId].roleActions = role3;
+      users[socketId].roleActions = role3Actions;
       users[socketId].hasRole = true;
     }
     console.log("user role assigned: " + users[socketId].role);
@@ -119,10 +111,10 @@ const io = new Server(server, {
 
 // SOCKET.IO 
 
-  io.on('connection', (socket) => { // When a client connects to the server
+  io.on('connection', function(socket) { // When a client connects to the server
       console.log('a user connected:' + socket.id); // Logs a message to the console
       
-      socket.on('disconnect', () => { // When a client disconnects from the server
+      socket.on('disconnect', function() { // When a client disconnects from the server
           console.log('user disconnected: ' + socket.id); // Logs a message to the console
 
           rooms.forEach((room) => { // Iterates through the rooms array
@@ -144,57 +136,19 @@ const io = new Server(server, {
 
       });
 
-      socket.on('role-chosen', (data) => {
+      socket.on('role-chosen', function(data) {
         console.log("role chosen: " + data);
         createUser(socket.id);
         assignRole(socket.id, data);
       });
 
-      socket.on('join-room', () => { // When a client wants to join a room
-        console.log("user wanting to join: " + socket.id);
 
-
-        //createUser(socket.id);
-
-        //const stringToSend = socket.id + " joined room";
-        //io.emit("messageToScreen", stringToSend);
-
-       /* for(let room of rooms){ // Iterates through the rooms array
-
-          if(room.users.includes(users[socket.id])){ // Checks if the user is already in a room
-            console.log("user already in room: " + room.name);
-            users[socket.id].room = room.name; // Sets the user's room in user object
-            return; // Stops the function here if the user is already in a room (Does not continue down to place the user in a room)
-          }
-
-        } 
-
-        console.log("user not in room");
-
-        const room = rooms.find((room) => room.available); // Finds the first available room
-        console.log("available room: " + room.name);
-        
-        if (room) {
-          room.users.push(users[socket.id]); // Adds the user to the room
-          console.log('user joined room: ' + room.name);
-          users[socket.id].room = room.name; // Sets the user's room in user object
-
-          if(room.users.length === room.maxUsers){
-            room.available = false; // Sets the room to not available
-            console.log("room full");
-          }
-
-          console.log(room);
-
-        }
-        */
-      });
-
-      socket.on('next-GM-instruction', () => {
+      socket.on('next-GM-instruction', function() {
         io.emit("time-for-next-instruction");
       });
 
-      socket.on("getInstruction", () => {
+
+      socket.on("getInstruction", function() {
         if(!users[socket.id]){
           return;
         }
