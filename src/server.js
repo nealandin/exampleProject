@@ -34,7 +34,7 @@ const io = new Server(server, {
 
 // DATA
 
-  const users = [];
+  const users = {};
 
   const rooms = [
     {
@@ -51,12 +51,14 @@ const io = new Server(server, {
     }
   ];
 
+  // crab
+  let crabActions = ["Snap your fingers to the rhythm of an ABBA song", "SAY: Hello, what a crabbie day", "SAY: I’m hungry, I need fresh bodies","SAY: Would it be creepy to dig deep","SAY: Do you wanna learn the crab dance? It’s a ritual from my ancestors", "Walk sideways to the centre of the room", "Walk sideways to the centre of the room", "Roll your eyes", "Pinch someone gently on the shoulder", "Shake yourself", "Do a mating dance for 10 seconds", "Jump awkwardly"];
+ 
+  // turtle
+  let turtleActions = [ "Smash gravestones", "Digg up graves", "Pee", "Place a curse on the other players", "Retract in to the shell", "Laugh evil", "Make zombies form dead people", "Open mind traps", "SAY: BOOO",  "SAY: Finally bloody silence! You guys make a great company.", "SAY: Rest in peace… NOT!!", "SAY: The dead and me, all cursed souls.", "SAY: The eternal screech, my favourite tune", "SAY: Where’s my seaweed?!", "SAY: Have you guys watched Franklin?" , "SAY: Where the scraps of my dinners rest."];
 
-  const role1Actions = ["role1-walk", "role1-talk"];
-  const role2Actions = ["role2-walk", "role2-talk"];
-  const role3Actions = ["role3-walk", "role3-talk"];
-
-
+  // fish
+  let fishActions = ["pay condolences", "flop around", "light a cigarette gesture", "heavy sigh", "look for clues", "cower in fear", "appreciate surroundings", "count to ten", "SAY: oh no no…that didn’t go so well", "SAY:  My therapist said that too", "SAY: I wonder what my therapist would think", "SAY: That seems fishy", "SAY: As my therapist said, just keep swimming!", "SAY: so sad", "SAY: I do not feel well", "SAY: What does your therapist say?", "SAY: I agree", "SAY: Such a cloudy day", "SAY: Ahh", "SAY: Phu", "SAY: Excuse me, can I sit here", "SAY: I wonder if it will be rainy tomorrow?", "SAY: I feel you"];
 
 
 // FUNCTIONS
@@ -78,22 +80,23 @@ const io = new Server(server, {
   }
 
   function assignRole(socketId, role) {
-    if (role === "role1") {
+    if (role === "crab") {
       users[socketId].role = role;
-      users[socketId].roleActions = role1Actions;
+      users[socketId].roleActions = crabActions;
       users[socketId].hasRole = true;
-    } else if (role === "role2") {
+    } else if (role === "turtle") {
       users[socketId].role = role;
-      users[socketId].roleActions = role2Actions;
+      users[socketId].roleActions = turtleActions;
       users[socketId].hasRole = true;
-    } else if (role === "role3") {
+    } else if (role === "fish") {
       users[socketId].role = role;
-      users[socketId].roleActions = role3Actions;
+      users[socketId].roleActions = fishActions;
       users[socketId].hasRole = true;
     }
     console.log("user role assigned: " + users[socketId].role);
   }
 
+  
   // removing user object from users array
   function removeUser(socketId) {
     delete users[socketId];
@@ -144,29 +147,32 @@ const io = new Server(server, {
 
 
       socket.on('next-GM-instruction', function() {
-        io.emit("time-for-next-instruction");
+        Object.values(users).forEach((user) => {
+          sendInstruction(user.id);
+        });
       });
 
 
-      socket.on("getInstruction", function() {
-        if(!users[socket.id]){
+      function sendInstruction(socketId) {
+        console.log("socketId: " + socketId);
+        if(!users[socketId]){
           return;
         }
-        if(!users[socket.id].hasRole){
+        if(!users[socketId].hasRole){
           return;
         }
-        let roleActions = users[socket.id].roleActions; // get the roleActions array from the user object
+        let roleActions = users[socketId].roleActions; // get the roleActions array from the user object
         let instruction = getRandomFromArray(roleActions); // get a random instruction from the roleActions array
         
-        if(users[socket.id].currentInstruction === instruction){ // if the instruction is the same as the last one
+        if(users[socketId].currentInstruction === instruction){ // if the instruction is the same as the last one
           roleActions = roleActions.filter((action) => action !== instruction); // remove the instruction from the roleActions array
           instruction = getRandomFromArray(roleActions); // get a new random instruction
         } 
  
-        socket.emit("next-instruction", instruction);
-        users[socket.id].currentInstruction = instruction; // set instruction to currentInstruction in user object
+        io.to(socketId).emit("next-instruction", instruction);
+        users[socketId].currentInstruction = instruction; // set instruction to currentInstruction in user object
         
-      });
+      }
       
       
   });
