@@ -40,3 +40,4 @@ npm install
 source ~/.bash_profile
 
 echo "Setup complete! Node.js $(node --version) is now installed and ready to use."
+echo "Now run: source ~/.bash_profile"
