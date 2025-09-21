@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-
+touch ~/.bash_profile
 # Ensure bash profile exists for nvm installer
 if [[ "$SHELL" == *"bash"* ]] && [ ! -f "$HOME/.bash_profile" ]; then
     echo "Creating ~/.bash_profile for bash shell..."
@@ -37,5 +37,6 @@ nvm use 22
 
 echo "Installing npm dependencies..."
 npm install
+source ~/.bash_profile
 
 echo "Setup complete! Node.js $(node --version) is now installed and ready to use."
